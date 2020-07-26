@@ -10,9 +10,13 @@ const defaultRemoteAction = {
   service: 'remote.send_command',
 };
 
+const SOURCE_MY_TV_SUPER = 'MyTV Super';
+const SOURCE_NOW_TV = 'NOW TV';
+const SOURCE_TV = 'TV';
+
 /* eslint no-console: 0 */
 console.info(
-  `%c  ROKU-CARD     \n%c  Version ${CARD_VERSION} `,
+  `%c ROKU-CARD \n%c Version ${CARD_VERSION} `,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
 );
@@ -21,12 +25,16 @@ console.info(
 export class RokuCard extends LitElement {
   @property() public hass?: HomeAssistant;
   @property() private _config?: RokuCardConfig;
+  @property() public mediaEntity = 'input_select.media_source';
 
   public getCardSize(): number {
     return 7;
   }
 
   public setConfig(config: RokuCardConfig): void {
+    //Object { type: "custom:roku-card", entity: "input_select.media_source", tv: true }
+    console.log('Entity------:', config.entity);
+
     if (!config.entity && !config.remote) {
       console.log("Invalid configuration. If no entity provided, you'll need to provide a remote entity");
       return;
@@ -44,6 +52,7 @@ export class RokuCard extends LitElement {
     }
 
     const stateObj = this.hass.states[this._config.entity];
+    const tabObj = this.hass.states[this.mediaEntity];
 
     if (this._config.entity && !stateObj) {
       return html`
@@ -56,50 +65,158 @@ export class RokuCard extends LitElement {
     return html`
       <ha-card .header="${this._config.name}">
         <div class="remote">
-          <div class="row">
-            <div class="app">
-              ${stateObj ? stateObj.attributes.app_name : ''}
+          <div class="header-tab row">
+            ${stateObj.attributes.options.map(
+              (source) => html`
+                ${source === SOURCE_MY_TV_SUPER
+                  ? this._renderTab(
+                      source,
+                      'mdi:video',
+                      stateObj.state === SOURCE_MY_TV_SUPER ? 'on' : 'off',
+                      'MyTV Super',
+                    )
+                  : ''}
+                ${source === SOURCE_NOW_TV
+                  ? this._renderTab(source, 'mdi:video', stateObj.state === SOURCE_NOW_TV ? 'on' : 'off', 'NOW TV')
+                  : ''}
+                ${source === SOURCE_TV
+                  ? this._renderTab(source, 'mdi:television-classic', stateObj.state === SOURCE_TV ? 'on' : 'off', 'TV')
+                  : ''}
+              `,
+            )}
+          </div>
+          ${tabObj.state === SOURCE_MY_TV_SUPER ? html`
+            <div class="row">
+            ${this._renderButton("tvb-home","mdi:home","Home")}
+            ${this._renderButton("tvb-back","mdi:arrow-left","Back")}
+            ${this._renderButton("tvb-menu","mdi:menu","Menu")} 
+            ${this._renderButton("tvb-vod","mdi:window-restore","TV/VOD")} 
             </div>
-            ${this._config.tv || (this._config.power && this._config.power.show)
-              ? this._renderButton('power', 'mdi:power', 'Power')
-              : ''}
-          </div>
-          <div class="row">
-            ${this._renderButton('back', 'mdi:arrow-left', 'Back')}
-            ${this._renderButton('info', 'mdi:asterisk', 'Info')} ${this._renderButton('home', 'mdi:home', 'Home')}
-          </div>
-
-          <div class="row">
-            ${this._renderImage(0)} ${this._renderButton('up', 'mdi:chevron-up', 'Up')} ${this._renderImage(1)}
-          </div>
-
-          <div class="row">
-            ${this._renderButton('left', 'mdi:chevron-left', 'Left')}
-            ${this._renderButton('select', 'mdi:checkbox-blank-circle', 'Select')}
-            ${this._renderButton('right', 'mdi:chevron-right', 'Right')}
-          </div>
-
-          <div class="row">
-            ${this._renderImage(2)} ${this._renderButton('down', 'mdi:chevron-down', 'Down')} ${this._renderImage(3)}
-          </div>
-
-          <div class="row">
-            ${this._renderButton('reverse', 'mdi:rewind', 'Rewind')}
-            ${this._renderButton('play', 'mdi:play-pause', 'Play/Pause')}
-            ${this._renderButton('forward', 'mdi:fast-forward', 'Fast-Forward')}
-          </div>
-
-          ${this._config.tv ||
-          (this._config.volume_mute && this._config.volume_mute.show) ||
-          (this._config.volume_down && this._config.volume_down.show) ||
-          (this._config.volume_up && this._config.volume_up.show)
+            <div class="row">
+              ${this._renderButton("tvb-up","mdi:chevron-up","Up")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-left","mdi:chevron-left","Left")}
+              ${this._renderButton("tvb-select","mdi:checkbox-blank-circle","Select")}
+              ${this._renderButton("tvb-right","mdi:chevron-right","Right")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-down","mdi:chevron-down","Down")} 
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-play","mdi:play-pause","Play/Pause")}
+              ${this._renderButton("tvb-stop","mdi:stop","Stop")}
+              ${this._renderButton("tvb-reverse","mdi:rewind","Rewind")}
+              ${this._renderButton("tvb-forward","mdi:fast-forward","Fast-Forward")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-red","mdi:checkbox-blank","Red","","red")}
+              ${this._renderButton("tvb-yellow","mdi:checkbox-blank","Yellow","","yellow")}
+              ${this._renderButton("tvb-blue","mdi:checkbox-blank","Blue","","blue")}
+              ${this._renderButton("tvb-green","mdi:checkbox-blank","Green","","green")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-button-1","mdi:numeric-1-box-outline","1")}
+              ${this._renderButton("tvb-button-2","mdi:numeric-2-box-outline","2")}
+              ${this._renderButton("tvb-button-3","mdi:numeric-3-box-outline","3")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-button-4","mdi:numeric-4-box-outline","4")}
+              ${this._renderButton("tvb-button-5","mdi:numeric-5-box-outline","5")}
+              ${this._renderButton("tvb-button-6","mdi:numeric-6-box-outline","6")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-button-7","mdi:numeric-7-box-outline","7")}
+              ${this._renderButton("tvb-button-8","mdi:numeric-8-box-outline","8")}
+              ${this._renderButton("tvb-button-9","mdi:numeric-9-box-outline","9")}
+            </div>
+            <div class="row">
+              ${this._renderButton("tvb-channel-down","mdi:chevron-down","Channel Down")}
+              ${this._renderButton("tvb-button-0","mdi:numeric-0-box-outline","0")}
+              ${this._renderButton("tvb-channel-up","mdi:chevron-up","Channel Up")}
+            </div>
+              `
+            : ''}
+          ${tabObj.state === SOURCE_NOW_TV
             ? html`
                 <div class="row">
-                  ${this._renderButton('volume_mute', 'mdi:volume-mute', 'Volume Mute')}
-                  ${this._renderButton('volume_down', 'mdi:volume-minus', 'Volume Down')}
-                  ${this._renderButton('volume_up', 'mdi:volume-plus', 'Volume Up')}
+                  ${this._renderButton('now-play', 'mdi:play-pause', 'Play/Pause')}
+                  ${this._renderButton('now-stop', 'mdi:stop', 'Stop')}
+                  ${this._renderButton('now-reverse', 'mdi:rewind', 'Rewind')}
+                  ${this._renderButton('now-forward', 'mdi:fast-forward', 'Fast-Forward')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('now-up', 'mdi:chevron-up', 'Up')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('now-left', 'mdi:chevron-left', 'Left')}
+                  ${this._renderButton('now-select', 'mdi:checkbox-blank-circle', 'Select')}
+                  ${this._renderButton('now-right', 'mdi:chevron-right', 'Right')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('now-down', 'mdi:chevron-down', 'Down')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('now-back', 'mdi:arrow-left', 'Back')}
+                  ${this._renderButton('now-home', 'mdi:home', 'Home')}
+                  ${this._renderButton('now-info', 'mdi:information-outline', 'Info')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('now-red', 'mdi:crop-landscape', 'Red', '', 'red')}
+                  ${this._renderButton('now-yellow', 'mdi:crop-landscape', 'Yellow', '', 'yellow')}
+                  ${this._renderButton('now-blue', 'mdi:crop-landscape', 'Blue', '', 'blue')}
+                  ${this._renderButton('now-green', 'mdi:crop-landscape', 'Green', '', 'green')}
                 </div>
               `
+            : ''}
+          ${tabObj.state === SOURCE_TV ? html`
+            <div class="row">
+            ${this._renderButton("tv-source","mdi:login-variant","Source")}
+            ${this._renderButton("tv-epg","mdi:sign-text","EPG")}
+            ${this._renderButton("tv-back","mdi:undo-variant","Back")} 
+            ${this._renderButton("tv-exit","mdi:close","Exit")} 
+          </div>
+          <div class="row">
+            ${this._renderButton("tv-home","mdi:home","Home")}
+            ${this._renderButton("tv-settings","mdi:settings","Options")}
+            ${this._renderButton("tv-audio","mdi:voice","Audio")} 
+            ${this._renderButton("tv-subtitle","mdi:file-document-box","Subtitle")} 
+          </div>
+          <div class="row">
+            ${this._renderButton("tv-netflix","mdi:netflix","Netflix")}
+            ${this._renderButton("tv-up","mdi:chevron-up","Up")}
+            ${this._renderButton("tv-youtube","mdi:youtube","YouTube")}
+          </div>
+          <div class="row">
+            ${this._renderButton("tv-left","mdi:chevron-left","Left")}
+            ${this._renderButton("tv-select","mdi:checkbox-blank-circle","Select")}
+            ${this._renderButton("tv-right","mdi:chevron-right","Right")}
+          </div>
+          <div class="row">
+            ${this._renderButton("tv-playstation","mdi:playstation","Playstation")}
+            ${this._renderButton("tv-down","mdi:chevron-down","Down")} 
+            ${this._renderButton("tv-browser","mdi:google-plus-box","Browser")}
+          </div>
+
+          <div class="row">
+            ${this._renderButton("tv-play","mdi:play-pause","Play/Pause")}
+            ${this._renderButton("tv-stop","mdi:stop","Stop")}
+            ${this._renderButton("tv-rewind","mdi:rewind","Rewind")}
+            ${this._renderButton("tv-forward","mdi:fast-forward","Fast-Forward")}
+          </div>
+
+          <div class="row">
+            ${this._renderButton("tv-red","mdi:checkbox-blank","Red","","red")}
+            ${this._renderButton("tv-yellow","mdi:checkbox-blank","Yellow","","yellow")}
+            ${this._renderButton("tv-blue","mdi:checkbox-blank","Blue","","blue")}
+            ${this._renderButton("tv-green","mdi:checkbox-blank","Green","","green")}
+          </div>
+          <div class="row">
+          ${this._renderButton("tv-volume-down","mdi:volume-minus","Volume Down")}
+          ${this._renderButton("tv-volume-up","mdi:volume-plus","Volume Up")}
+          ${this._renderButton("tv-channel-down","mdi:chevron-down","Channel Down")}
+          ${this._renderButton("tv-channel-up","mdi:chevron-up","Channel Up")}
+        </div> `
             : ''}
         </div>
       </ha-card>
@@ -121,20 +238,48 @@ export class RokuCard extends LitElement {
 
   static get styles(): CSSResult {
     return css`
+      .header-tab {
+        margin: 10px 0;
+      }
       .remote {
         padding: 16px 0px 16px 0px;
       }
       img,
-      ha-icon-button {
-        cursor: pointer;
+      iron-icon {
+        padding-right: 5px;
       }
       ha-icon-button {
-        --mdc-icon-button-size: 64px;
-        --mdc-icon-size: 48px;
-      }
-      img {
         width: 64px;
         height: 64px;
+        cursor: pointer;
+      }
+      ha-button {
+        cursor: pointer;
+        font-size: var(--ha-card-header-font-size, 24px);
+        font-weight: bold;
+      }
+      ha-icon-button.red {
+        color: red;
+      }
+      ha-icon-button.yellow {
+        color: yellow;
+      }
+      ha-icon-button.blue {
+        color: blue;
+      }
+      ha-icon-button.green {
+        color: green;
+      }
+
+      ha-icon-button.on,
+      ha-button.on {
+        color: var(--dark-primary-color);
+      }
+      ha-icon-button.off,
+      ha-button.off {
+        color: var(--primary-text-color: );
+      }
+      img {
         border-radius: 25px;
       }
       .row {
@@ -173,22 +318,48 @@ export class RokuCard extends LitElement {
       : html` <ha-icon-button></ha-icon-button> `;
   }
 
-  private _renderButton(button: string, icon: string, title: string): TemplateResult {
+  private _renderButton(button: string, icon: string, title: string, text = '', className = ''): TemplateResult {
     if (this._config) {
       const config = this._config[button];
       return config && config.show === false
         ? html` <ha-icon-button></ha-icon-button> `
         : html`
-            <ha-icon-button
+            <div>
+              <ha-icon-button
+                .button=${button}
+                class=${className}
+                icon=${icon}
+                title=${title}
+                @action=${this._handleAction}
+                .actionHandler=${actionHandler({
+                  hasHold: config && hasAction(config.hold_action),
+                  hasDoubleClick: config && hasAction(config.double_tap_action),
+                })}
+              ></ha-icon-button
+              >${text}
+            </div>
+          `;
+    } else {
+      return html``;
+    }
+  }
+
+  private _renderTab(button: string, icon: string, className: string, text = ''): TemplateResult {
+    if (this._config) {
+      const config = this._config[button];
+      return config && config.show === false
+        ? html` <ha-button>${text}</ha-button> `
+        : html`
+            <ha-button
               .button=${button}
-              icon=${icon}
-              title=${title}
-              @action=${this._handleAction}
+              class=${className}
+              @action=${this._handleTabAction}
               .actionHandler=${actionHandler({
                 hasHold: config && hasAction(config.hold_action),
                 hasDoubleClick: config && hasAction(config.double_tap_action),
               })}
-            ></ha-icon-button>
+              >${icon ? html`<iron-icon icon="${icon}"></iron-icon>` : ''}${text}</ha-button
+            >
           `;
     } else {
       return html``;
@@ -227,6 +398,33 @@ export class RokuCard extends LitElement {
               },
               ...config,
             },
+        ev.detail.action,
+      );
+    }
+  }
+
+  private _handleTabAction(ev): void {
+    if (this.hass && this._config && ev.detail.action) {
+      const button = ev.currentTarget.button;
+
+      /*****************************Hard codeed ***********************/
+      //const entity = "input_select.media_source";
+      const config = ev.currentTarget.config;
+
+      handleAction(
+        this,
+        this.hass,
+        {
+          tap_action: {
+            action: 'call-service',
+            service: 'input_select.select_option',
+            service_data: {
+              entity_id: this.mediaEntity,
+              option: button,
+            },
+          },
+          ...config,
+        },
         ev.detail.action,
       );
     }
