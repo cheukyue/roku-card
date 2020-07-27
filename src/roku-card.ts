@@ -32,9 +32,6 @@ export class RokuCard extends LitElement {
   }
 
   public setConfig(config: RokuCardConfig): void {
-    //Object { type: "custom:roku-card", entity: "input_select.media_source", tv: true }
-    console.log('Entity------:', config.entity);
-
     if (!config.entity && !config.remote) {
       console.log("Invalid configuration. If no entity provided, you'll need to provide a remote entity");
       return;
@@ -67,7 +64,7 @@ export class RokuCard extends LitElement {
         <div class="remote">
           <div class="header-tab row">
             ${stateObj.attributes.options.map(
-              (source) => html`
+              source => html`
                 ${source === SOURCE_MY_TV_SUPER
                   ? this._renderTab(
                       source,
@@ -85,56 +82,57 @@ export class RokuCard extends LitElement {
               `,
             )}
           </div>
-          ${tabObj.state === SOURCE_MY_TV_SUPER ? html`
-            <div class="row">
-            ${this._renderButton("tvb-home","mdi:home","Home")}
-            ${this._renderButton("tvb-back","mdi:arrow-left","Back")}
-            ${this._renderButton("tvb-menu","mdi:menu","Menu")} 
-            ${this._renderButton("tvb-vod","mdi:window-restore","TV/VOD")} 
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-up","mdi:chevron-up","Up")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-left","mdi:chevron-left","Left")}
-              ${this._renderButton("tvb-select","mdi:checkbox-blank-circle","Select")}
-              ${this._renderButton("tvb-right","mdi:chevron-right","Right")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-down","mdi:chevron-down","Down")} 
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-play","mdi:play-pause","Play/Pause")}
-              ${this._renderButton("tvb-stop","mdi:stop","Stop")}
-              ${this._renderButton("tvb-reverse","mdi:rewind","Rewind")}
-              ${this._renderButton("tvb-forward","mdi:fast-forward","Fast-Forward")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-red","mdi:checkbox-blank","Red","","red")}
-              ${this._renderButton("tvb-yellow","mdi:checkbox-blank","Yellow","","yellow")}
-              ${this._renderButton("tvb-blue","mdi:checkbox-blank","Blue","","blue")}
-              ${this._renderButton("tvb-green","mdi:checkbox-blank","Green","","green")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-button-1","mdi:numeric-1-box-outline","1")}
-              ${this._renderButton("tvb-button-2","mdi:numeric-2-box-outline","2")}
-              ${this._renderButton("tvb-button-3","mdi:numeric-3-box-outline","3")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-button-4","mdi:numeric-4-box-outline","4")}
-              ${this._renderButton("tvb-button-5","mdi:numeric-5-box-outline","5")}
-              ${this._renderButton("tvb-button-6","mdi:numeric-6-box-outline","6")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-button-7","mdi:numeric-7-box-outline","7")}
-              ${this._renderButton("tvb-button-8","mdi:numeric-8-box-outline","8")}
-              ${this._renderButton("tvb-button-9","mdi:numeric-9-box-outline","9")}
-            </div>
-            <div class="row">
-              ${this._renderButton("tvb-channel-down","mdi:chevron-down","Channel Down")}
-              ${this._renderButton("tvb-button-0","mdi:numeric-0-box-outline","0")}
-              ${this._renderButton("tvb-channel-up","mdi:chevron-up","Channel Up")}
-            </div>
+          ${tabObj.state === SOURCE_MY_TV_SUPER
+            ? html`
+                <div class="row">
+                  ${this._renderButton('tvb-home', 'mdi:home', 'Home')}
+                  ${this._renderButton('tvb-back', 'mdi:arrow-left', 'Back')}
+                  ${this._renderButton('tvb-menu', 'mdi:menu', 'Menu')}
+                  ${this._renderButton('tvb-vod', 'mdi:window-restore', 'TV/VOD')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-up', 'mdi:chevron-up', 'Up')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-left', 'mdi:chevron-left', 'Left')}
+                  ${this._renderButton('tvb-select', 'mdi:checkbox-blank-circle', 'Select')}
+                  ${this._renderButton('tvb-right', 'mdi:chevron-right', 'Right')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-down', 'mdi:chevron-down', 'Down')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-play', 'mdi:play-pause', 'Play/Pause')}
+                  ${this._renderButton('tvb-stop', 'mdi:stop', 'Stop')}
+                  ${this._renderButton('tvb-reverse', 'mdi:rewind', 'Rewind')}
+                  ${this._renderButton('tvb-forward', 'mdi:fast-forward', 'Fast-Forward')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-red', 'mdi:checkbox-blank', 'Red', '', 'red')}
+                  ${this._renderButton('tvb-yellow', 'mdi:checkbox-blank', 'Yellow', '', 'yellow')}
+                  ${this._renderButton('tvb-blue', 'mdi:checkbox-blank', 'Blue', '', 'blue')}
+                  ${this._renderButton('tvb-green', 'mdi:checkbox-blank', 'Green', '', 'green')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-button-1', 'mdi:numeric-1-box-outline', '1')}
+                  ${this._renderButton('tvb-button-2', 'mdi:numeric-2-box-outline', '2')}
+                  ${this._renderButton('tvb-button-3', 'mdi:numeric-3-box-outline', '3')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-button-4', 'mdi:numeric-4-box-outline', '4')}
+                  ${this._renderButton('tvb-button-5', 'mdi:numeric-5-box-outline', '5')}
+                  ${this._renderButton('tvb-button-6', 'mdi:numeric-6-box-outline', '6')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-button-7', 'mdi:numeric-7-box-outline', '7')}
+                  ${this._renderButton('tvb-button-8', 'mdi:numeric-8-box-outline', '8')}
+                  ${this._renderButton('tvb-button-9', 'mdi:numeric-9-box-outline', '9')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tvb-channel-down', 'mdi:chevron-down', 'Channel Down')}
+                  ${this._renderButton('tvb-button-0', 'mdi:numeric-0-box-outline', '0')}
+                  ${this._renderButton('tvb-channel-up', 'mdi:chevron-up', 'Channel Up')}
+                </div>
               `
             : ''}
           ${tabObj.state === SOURCE_NOW_TV
@@ -169,54 +167,56 @@ export class RokuCard extends LitElement {
                 </div>
               `
             : ''}
-          ${tabObj.state === SOURCE_TV ? html`
-            <div class="row">
-            ${this._renderButton("tv-source","mdi:login-variant","Source")}
-            ${this._renderButton("tv-epg","mdi:sign-text","EPG")}
-            ${this._renderButton("tv-back","mdi:undo-variant","Back")} 
-            ${this._renderButton("tv-exit","mdi:close","Exit")} 
-          </div>
-          <div class="row">
-            ${this._renderButton("tv-home","mdi:home","Home")}
-            ${this._renderButton("tv-settings","mdi:settings","Options")}
-            ${this._renderButton("tv-audio","mdi:voice","Audio")} 
-            ${this._renderButton("tv-subtitle","mdi:file-document-box","Subtitle")} 
-          </div>
-          <div class="row">
-            ${this._renderButton("tv-netflix","mdi:netflix","Netflix")}
-            ${this._renderButton("tv-up","mdi:chevron-up","Up")}
-            ${this._renderButton("tv-youtube","mdi:youtube","YouTube")}
-          </div>
-          <div class="row">
-            ${this._renderButton("tv-left","mdi:chevron-left","Left")}
-            ${this._renderButton("tv-select","mdi:checkbox-blank-circle","Select")}
-            ${this._renderButton("tv-right","mdi:chevron-right","Right")}
-          </div>
-          <div class="row">
-            ${this._renderButton("tv-playstation","mdi:playstation","Playstation")}
-            ${this._renderButton("tv-down","mdi:chevron-down","Down")} 
-            ${this._renderButton("tv-browser","mdi:google-plus-box","Browser")}
-          </div>
+          ${tabObj.state === SOURCE_TV
+            ? html`
+                <div class="row">
+                  ${this._renderButton('tv-source', 'mdi:login-variant', 'Source')}
+                  ${this._renderButton('tv-epg', 'mdi:sign-text', 'EPG')}
+                  ${this._renderButton('tv-back', 'mdi:undo-variant', 'Back')}
+                  ${this._renderButton('tv-exit', 'mdi:close', 'Exit')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tv-home', 'mdi:home', 'Home')}
+                  ${this._renderButton('tv-settings', 'mdi:settings', 'Options')}
+                  ${this._renderButton('tv-audio', 'mdi:voice', 'Audio')}
+                  ${this._renderButton('tv-subtitle', 'mdi:file-document-box', 'Subtitle')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tv-netflix', 'mdi:netflix', 'Netflix')}
+                  ${this._renderButton('tv-up', 'mdi:chevron-up', 'Up')}
+                  ${this._renderButton('tv-youtube', 'mdi:youtube', 'YouTube')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tv-left', 'mdi:chevron-left', 'Left')}
+                  ${this._renderButton('tv-select', 'mdi:checkbox-blank-circle', 'Select')}
+                  ${this._renderButton('tv-right', 'mdi:chevron-right', 'Right')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tv-playstation', 'mdi:playstation', 'Playstation')}
+                  ${this._renderButton('tv-down', 'mdi:chevron-down', 'Down')}
+                  ${this._renderButton('tv-browser', 'mdi:google-plus-box', 'Browser')}
+                </div>
 
-          <div class="row">
-            ${this._renderButton("tv-play","mdi:play-pause","Play/Pause")}
-            ${this._renderButton("tv-stop","mdi:stop","Stop")}
-            ${this._renderButton("tv-rewind","mdi:rewind","Rewind")}
-            ${this._renderButton("tv-forward","mdi:fast-forward","Fast-Forward")}
-          </div>
+                <div class="row">
+                  ${this._renderButton('tv-play', 'mdi:play-pause', 'Play/Pause')}
+                  ${this._renderButton('tv-stop', 'mdi:stop', 'Stop')}
+                  ${this._renderButton('tv-rewind', 'mdi:rewind', 'Rewind')}
+                  ${this._renderButton('tv-forward', 'mdi:fast-forward', 'Fast-Forward')}
+                </div>
 
-          <div class="row">
-            ${this._renderButton("tv-red","mdi:checkbox-blank","Red","","red")}
-            ${this._renderButton("tv-yellow","mdi:checkbox-blank","Yellow","","yellow")}
-            ${this._renderButton("tv-blue","mdi:checkbox-blank","Blue","","blue")}
-            ${this._renderButton("tv-green","mdi:checkbox-blank","Green","","green")}
-          </div>
-          <div class="row">
-          ${this._renderButton("tv-volume-down","mdi:volume-minus","Volume Down")}
-          ${this._renderButton("tv-volume-up","mdi:volume-plus","Volume Up")}
-          ${this._renderButton("tv-channel-down","mdi:chevron-down","Channel Down")}
-          ${this._renderButton("tv-channel-up","mdi:chevron-up","Channel Up")}
-        </div> `
+                <div class="row">
+                  ${this._renderButton('tv-red', 'mdi:checkbox-blank', 'Red', '', 'red')}
+                  ${this._renderButton('tv-yellow', 'mdi:checkbox-blank', 'Yellow', '', 'yellow')}
+                  ${this._renderButton('tv-blue', 'mdi:checkbox-blank', 'Blue', '', 'blue')}
+                  ${this._renderButton('tv-green', 'mdi:checkbox-blank', 'Green', '', 'green')}
+                </div>
+                <div class="row">
+                  ${this._renderButton('tv-volume-down', 'mdi:volume-minus', 'Volume Down')}
+                  ${this._renderButton('tv-volume-up', 'mdi:volume-plus', 'Volume Up')}
+                  ${this._renderButton('tv-channel-down', 'mdi:chevron-down', 'Channel Down')}
+                  ${this._renderButton('tv-channel-up', 'mdi:chevron-up', 'Channel Up')}
+                </div>
+              `
             : ''}
         </div>
       </ha-card>
@@ -315,14 +315,18 @@ export class RokuCard extends LitElement {
             })}
           />
         `
-      : html` <ha-icon-button></ha-icon-button> `;
+      : html`
+          <ha-icon-button></ha-icon-button>
+        `;
   }
 
   private _renderButton(button: string, icon: string, title: string, text = '', className = ''): TemplateResult {
     if (this._config) {
       const config = this._config[button];
       return config && config.show === false
-        ? html` <ha-icon-button></ha-icon-button> `
+        ? html`
+            <ha-icon-button></ha-icon-button>
+          `
         : html`
             <div>
               <ha-icon-button
@@ -348,7 +352,9 @@ export class RokuCard extends LitElement {
     if (this._config) {
       const config = this._config[button];
       return config && config.show === false
-        ? html` <ha-button>${text}</ha-button> `
+        ? html`
+            <ha-button>${text}</ha-button>
+          `
         : html`
             <ha-button
               .button=${button}
@@ -358,7 +364,11 @@ export class RokuCard extends LitElement {
                 hasHold: config && hasAction(config.hold_action),
                 hasDoubleClick: config && hasAction(config.double_tap_action),
               })}
-              >${icon ? html`<iron-icon icon="${icon}"></iron-icon>` : ''}${text}</ha-button
+              >${icon
+                ? html`
+                    <iron-icon icon="${icon}"></iron-icon>
+                  `
+                : ''}${text}</ha-button
             >
           `;
     } else {
